@@ -1,4 +1,19 @@
 # MKS65C-shell
+
+## Order of Things To Do 
+1. Organize
+2. Fully debug what we have
+3. Complete all features of assignment
+4. History (print inline)
+5. Partial history completion
+6. Quoting/String handling("" '' "${VARNAME})
+7. Global variables($var)
+8. Prompt
+9. Alias
+10. Control flow
+11. Functions
+12. TBC
+
 2018-11-19 Don't be a shell out...
 Goal: Write your own shell.
   Read a line at a time, parse the line to separate the command from its arguments. It should then fork and exec the command. The parent process should wait until the exec'd program exits and then it should read the next command.
