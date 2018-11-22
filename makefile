@@ -1,12 +1,14 @@
-all: shell.o
-	gcc shell.o
+all: shell.o parseargs.o
+	gcc -g shell.o parseargs.o -o main
 
 shell.o: shell.c shell.h
-	gcc -c shell.c
+	gcc -g -c shell.c
+
+parseargs.o: parseargs.c parseargs.h
+	gcc -g -c parseargs.c
 
 clean:
-	rm *.o
-	rm a.out
+	rm *.o main
 
-run:
-	./a.out
+run: all
+	./main

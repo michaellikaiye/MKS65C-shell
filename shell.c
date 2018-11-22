@@ -16,40 +16,19 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <errno.h>
-
-char ** parse_argsSemiColon(char * line) {
-  char ** arr = malloc(15 * sizeof(char *));
-  int i = 0;
-  while(line) {
-    arr[i] = strsep(&line, ";");
-    i++;
-  }
-
-  return arr;
-}
-char ** parse_args( char * line) {
-  char ** arr = malloc(15 * sizeof(char *));
-  int i = 0;
-  while(line) {
-    arr[i] = strsep(&line, " ");
-    i++;
-  }
-
-  return arr;
-}
+#include "parseargs.h"
 
 // Function where the system command is executed
-void run(char** args) {
+void run(char** args, int argc) {
   // Forking a child
   int pid = fork();
-
   if(pid == -1) {
-    printf("failed to fork child\n");
-    return;
+    printf("fysh: failed to fork child\n");
   }
   else if(pid == 0) {
+    if(!argc) { return; }
     if(execvp(args[0], args) < 0) {
-      printf("failed to execute command\n");
+      printf("fysh: failed to execute command\n");
     }
     exit(0);
   } else {
@@ -58,7 +37,8 @@ void run(char** args) {
     return;
   }
 }
-void printstart() {
+
+void printprompt() {
   char curD[100];
   getcwd(curD, sizeof(curD));
   printf("\x1B[34m");
@@ -70,28 +50,34 @@ void printstart() {
 int main() {
   //execvp(args[0], args);
 
-  char line[100];
-
   while(1) {
-    printstart();
-    scanf("%[^\n]%*c", line);
+    char line[100];
+    printprompt();
+    scanf("%[^\n]", line);
+    if(!strcmp(line, "")) {
+    
+    } else {
 
-    char ** semiColons = parse_argsSemiColon(line);
-    int i = 0;
-    while(semiColons[i]) {
-      char ** args = parse_args(semiColons[i++]);
-      if(strcmp(line, "") == 0)
-	printf("to be worked on infinity\n");
-      else if(strcmp(args[0], "exit") == 0) {
-	printf("closing shell\n");
-	exit(0);
-      }
-      else if(strcmp(args[0], "cd") == 0) {
-	printf("to be worked on\n");
-	//return 0; //maybe be something else?idk
-      }
-      else {
-	run(args);
+      char ** semiColons = parse_argsSemiColon(line);
+      int i = 0;
+      while(semiColons[i]) {
+        int argc;
+        char ** argv = parse_args(&argc, semiColons[i++]);
+        if(strcmp(argv[0], "exit") == 0) {
+          exit(0);
+        }
+        else if(strcmp(argv[0], "cd") == 0) {
+          if(argc - 1 > 2) {
+            printf("fysh: cd takes 1 argument, %d found\n", argc - 1);
+          }
+          int stat = chdir(argv[1]);
+          if(stat == -1) {
+            printf("fysh: cd: %s\n", strerror(errno));
+          }
+        }
+        else {
+          run(argv, argc);
+        }
       }
     }
   }
