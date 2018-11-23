@@ -6,8 +6,8 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -17,6 +17,7 @@
 #include <pwd.h>
 #include <errno.h>
 #include "parseargs.h"
+#include "io.h"
 
 // Function where the system command is executed
 void run(char** args, int argc) {
@@ -28,7 +29,7 @@ void run(char** args, int argc) {
   else if(pid == 0) {
     if(!argc) { return; }
     if(execvp(args[0], args) < 0) {
-      printf("fysh: failed to execute command\n");
+      printf("fysh: failed to execute %s\n", args[0]);
     }
     exit(0);
   } else {
@@ -49,11 +50,11 @@ void printprompt() {
 
 int main() {
   //execvp(args[0], args);
-
   while(1) {
-    char line[100];
+    unsigned char line[1000];
     printprompt();
-    scanf("%[^\n]%*c", line);
+    //scanf("%[^\n]%*c", line);
+    liveRead(line, 1000);
     if(!strcmp(line, "")) {
     
     } else {

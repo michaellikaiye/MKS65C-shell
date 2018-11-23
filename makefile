@@ -1,5 +1,5 @@
-all: shell.o parseargs.o
-	gcc -g shell.o parseargs.o -o main
+all: shell.o parseargs.o io.o
+	gcc -g shell.o parseargs.o io.o -o main
 
 test: test.c io.o
 	gcc -g io.o test.c -o test
