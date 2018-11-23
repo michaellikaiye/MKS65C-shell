@@ -1,11 +1,14 @@
 all: shell.o parseargs.o
 	gcc -g shell.o parseargs.o -o main
 
-test:
-	gcc -g test.c -o test
+test: test.c io.o
+	gcc -g io.o test.c -o test
 
-rtest:
+rtest: test
 	./test
+
+io.o: io.c io.h
+	gcc -g -c io.c
 
 shell.o: shell.c shell.h
 	gcc -g -c shell.c
