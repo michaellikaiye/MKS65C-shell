@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+
+#define KEY_DEL 127
 /* reads from keypress, doesn't echo */
 int getch()
 {
@@ -18,11 +20,19 @@ int getch()
       return ch;
 }
 
+void delchar() {
+  char buf[] = "\b \b";
+  write(STDIN_FILENO, buf, sizeof(buf) - 1);
+}
+
 int main() {
-  int ch;
-  while((ch = (char) getch()) != EOF) {
-    printf("Character: %c\n", ch);
-    printf("Char Num:  %d\n", ch);
+  unsigned char ch;
+  while((ch = (unsigned char) getch()) != EOF) {
+    if(ch == KEY_DEL) {
+      delchar();
+    } else {
+    write(STDIN_FILENO, &ch, sizeof(unsigned char));
+    }
   }
 
   return 0;
