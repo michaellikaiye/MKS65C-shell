@@ -53,7 +53,7 @@ int main() {
   while(1) {
     char line[100];
     printprompt();
-    scanf("%[^\n]", line);
+    scanf("%[^\n]%*c", line);
     if(!strcmp(line, "")) {
     
     } else {
