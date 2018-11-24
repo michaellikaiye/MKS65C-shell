@@ -1,10 +1,3 @@
-/*errors
-  when entering spaces where they don't belong, command takes space as input
-  fix parse_args function
-  big error when entering nothing into shell line
-  fix main
-*/
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -53,7 +46,6 @@ int main() {
   while(1) {
     unsigned char line[1000];
     printprompt();
-    //scanf("%[^\n]%*c", line);
     liveRead(line, 1000);
     if(!strcmp(line, "")) {
     
