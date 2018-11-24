@@ -1,10 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
-#include "globals.h"
 #include "parseargs.h"
 
 char ** parse_argsSemiColon(char * line) {
-	char ** arr = malloc(ARG_MAX * sizeof(char *));
+	char ** arr = malloc(1000 * sizeof(char *));
 	int i = 0;
 	while(line) {
 		arr[i] = strsep(&line, ";");
@@ -20,7 +19,7 @@ char * hasPipe(char * line) {
 }
 
 char ** parse_argsSpace(int * argc, char * line) {
-	char ** arr = malloc(100 * sizeof(char *));
+	char ** arr = malloc(1000 * sizeof(char *));
 	int i = 0;
 	clean_str(line);
 	while(line) {
@@ -28,7 +27,7 @@ char ** parse_argsSpace(int * argc, char * line) {
 		i++;
 	}
 
-	*argc = i + 1;
+	*argc = i;
 	return arr;
 }
 

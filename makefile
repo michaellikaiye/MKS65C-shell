@@ -1,5 +1,8 @@
-all: shell.o parseargs.o io.o
-	gcc -g shell.o parseargs.o io.o -o main
+all: shell.o parseargs.o io.o execcom.o
+	gcc -g shell.o parseargs.o execcom.o io.o -o main
+
+debug: all
+	gdb -tui main
 
 test: test.c io.o
 	gcc -g io.o test.c -o test
@@ -15,6 +18,9 @@ shell.o: shell.c shell.h
 
 parseargs.o: parseargs.c parseargs.h
 	gcc -g -c parseargs.c
+
+execcom.o: execcom.c execcom.h
+	gcc -g -c execcom.c
 
 clean:
 	rm *.o main test

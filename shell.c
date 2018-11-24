@@ -11,34 +11,12 @@
 #include <errno.h>
 #include "parseargs.h"
 #include "io.h"
+#include "execcom.h"
 
 //colors
 #define NRM  "\x1B[0m"
 #define GRN  "\x1B[32m"
 #define BLU  "\x1B[34m"
-
-// Function where the system command is executed
-void run(char** args, int argc) {
-	// Forking a child
-	int pid = fork();
-	if(pid == -1) {
-		printf("fysh: failed to fork child\n");
-	}
-	else if(pid == 0) {
-		if(!argc) { return;
-		}
-		if(execvp(args[0], args) < 0) {
-			if(strcmp(args[0], ""))
-				printf("fysh: command '%s' not found\n", args[0]);
-			// else input is nothing so do nothing
-		}
-		exit(0);
-	} else {
-		// waiting for child to terminate
-		wait(NULL);
-		return;
-	}
-}
 
 void printprompt() {
 	char * name = getenv("USER");
@@ -57,22 +35,8 @@ int main() {
 		char ** semiColons = parse_argsSemiColon(line);
 		int i = 0;
 		while(semiColons[i]) {
-      int argc;
-      char ** argv = parse_argsSpace(&argc, semiColons[i]);
-      if(strcmp(argv[0], "exit") == 0) {
-        exit(0);
-      } else if(strcmp(argv[0], "cd") == 0) {
-        if(argc - 1 > 2) {
-          printf("fysh: cd takes 1 argument, %d found\n", argc - 1);
-        }
-        int stat = chdir(argv[1]);
-        if(stat == -1) {
-          printf("fysh: cd: %s\n", strerror(errno));
-        }
-      } else {
-        run(argv, argc);
-      }
-			i++;
+      execcom_redir(semiColons[i]);
+      i++;
 		}
 	}
 
