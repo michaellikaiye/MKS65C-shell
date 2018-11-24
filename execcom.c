@@ -18,7 +18,7 @@ void execcom_redir(char * com) {
   int reg_stdin = dup(STDIN_FILENO);
   int outf = -1;
   int inf = -1; //output + input files
-  char ** cpy = malloc(argc * sizeof(char *));
+  char ** cpy = malloc(1000 * sizeof(char *));
   int nargc = 0;
 
   for(int i = 0; i < argc; i++) {
@@ -49,6 +49,8 @@ void execcom_redir(char * com) {
       nargc++;
     }
   }
+  //null terminate argv array
+  cpy[nargc] = NULL;
   //Execute command
   execcom_builtins(nargc, cpy);
   //cleanup
@@ -101,9 +103,9 @@ void run(int argc, char** argv) {
 	else if(pid == 0) {
 		if(!argv) { return;
 		}
-		if(execvp(argv[0], argv) < 0) {
+		if(execvp(argv[0], argv) == -1) {
 			if(strcmp(argv[0], ""))
-        printf("fysh: %s", strerror(errno));
+        printf("fysh: %s: %s\n",argv[0], strerror(errno));
 			// else input is nothing so do nothing
 		}
 		exit(0);
