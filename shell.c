@@ -52,38 +52,29 @@ int main() {
 	while(1) {
 		unsigned char line[1000];
 		printprompt();
-		//scanf("%[^\n]%*c", line);
 		liveRead(line, 1000);
 
 		char ** semiColons = parse_argsSemiColon(line);
 		int i = 0;
 		while(semiColons[i]) {
-			if(hasPipe(semiColons[i]) == NULL) {
-				int argc;
-				char ** argv = parse_argsSpace(&argc, semiColons[i]);
-				if(strcmp(argv[0], "exit") == 0) {
-					exit(0);
-				} else if(strcmp(argv[0], "cd") == 0) {
-					if(argc - 1 > 2) {
-						printf("fysh: cd takes 1 argument, %d found\n", argc - 1);
-						//change print!!
-					}
-					int stat = chdir(argv[1]);
-					if(stat == -1) {
-						printf("fysh: cd: %s\n", strerror(errno));
-					}
-				}
-				else {
-					run(argv, argc);
-				}
-			} else {
-				printf("fysh: cannot pipe yet\n");     //do pipe stuff
-			}
+      int argc;
+      char ** argv = parse_argsSpace(&argc, semiColons[i]);
+      if(strcmp(argv[0], "exit") == 0) {
+        exit(0);
+      } else if(strcmp(argv[0], "cd") == 0) {
+        if(argc - 1 > 2) {
+          printf("fysh: cd takes 1 argument, %d found\n", argc - 1);
+        }
+        int stat = chdir(argv[1]);
+        if(stat == -1) {
+          printf("fysh: cd: %s\n", strerror(errno));
+        }
+      } else {
+        run(argv, argc);
+      }
 			i++;
 		}
 	}
 
-	//char * str = args[0];
-	//printdir(str);
 	return 0;
 }
