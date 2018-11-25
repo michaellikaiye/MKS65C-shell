@@ -36,20 +36,20 @@ int maxN(int a, int b) {
 }
 
 void liveRead(unsigned char * line, int count) {
-  unsigned char ch;
+  unsigned char * ch = malloc(sizeof(unsigned char));
   int cursorpos = 0;
   int ncp = 0; //new cursorpos
   int size = 0;
-  while((ch = (unsigned char) getch()) != KEY_ENT && cursorpos < count) {
-    if(ch == KEY_DEL) {
+  while((*ch = (unsigned char) getch()) != KEY_ENT && cursorpos < count) {
+    if(*ch == KEY_DEL) {
       if(cursorpos > 0) {
         strcpy(line + cursorpos - 1, line + cursorpos);
         ncp--;
         size--;
       }       
-    } else if (ch == KEY_ESC) {
+    } else if (*ch == KEY_ESC) {
       unsigned char buf[3];
-      buf[0] = ch;
+      buf[0] = *ch;
       buf[1] = getch();
       buf[2] = getch();
       if(buf[1] == '[') {
@@ -73,11 +73,11 @@ void liveRead(unsigned char * line, int count) {
           }
         }
       
-    } else if (ch >= 32 && ch <= 126) {
+    } else if (*ch >= 32 && *ch <= 126) {
       char * tmp = (char *) malloc(1000 * sizeof(char));
       strncpy(tmp, line, cursorpos);
       int len = strlen(tmp);
-      strncat(tmp + len, &ch, 1);
+      strncat(tmp + len, ch, 1);
       len++;
       strcat(tmp + len, line + cursorpos);
       strcpy(line, tmp);
