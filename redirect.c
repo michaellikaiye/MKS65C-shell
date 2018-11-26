@@ -6,7 +6,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "execcom.h"
+#include "pipe.h"
 #include "parseargs.h"
 
 //Parse one full command, delineated by ; or \n, dealing with redirects
@@ -53,7 +53,7 @@ void handle_redirect(char * com) {
   cpy[nargc] = NULL;
  
   //Execute command
-  execcom_piping(nargc, cpy);
+  handle_pipes(nargc, cpy);
 
   //cleanup
   free(cpy);
