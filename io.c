@@ -36,7 +36,8 @@ int maxN(int a, int b) {
 }
 
 void liveRead(unsigned char * line, int count) {
-  unsigned char * ch = malloc(sizeof(unsigned char));
+  unsigned char * ch = malloc(2 * sizeof(unsigned char));
+  ch[1] = '\0';
   int cursorpos = 0;
   int ncp = 0; //new cursorpos
   int size = 0;
