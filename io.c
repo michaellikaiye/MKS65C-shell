@@ -88,7 +88,7 @@ void liveRead(unsigned char * line, int count) {
     cursorbackward(size + 1);
     cursorforward(ncp);
     cursorpos = ncp;
- }
+  }
   line[size] = '\0';
   printf("\n");
 }

@@ -11,7 +11,7 @@
 #include <errno.h>
 #include "parseargs.h"
 #include "io.h"
-#include "execcom.h"
+#include "redirect.h"
 
 //colors
 #define NRM  "\x1B[0m"
@@ -26,6 +26,8 @@ void printprompt() {
 }
 
 int main() {
+  int reg_stdout = dup(STDOUT_FILENO);
+  int reg_stdin = dup(STDIN_FILENO);
 	while(1) {
 		unsigned char * line = calloc(1000, sizeof(char));
 		printprompt();
@@ -34,10 +36,12 @@ int main() {
 		int i = 0;
 
 		while(semiColons[i]) {
-      execcom_redir(semiColons[i]);
+      handle_redirect(semiColons[i]);
       i++;
 		}
     free(line);
+    dup2(reg_stdout, STDOUT_FILENO);
+    dup2(reg_stdin, STDIN_FILENO);
 	}
 
 	return 0;

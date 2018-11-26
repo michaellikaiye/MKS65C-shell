@@ -1,5 +1,5 @@
-all: shell.o parseargs.o io.o execcom.o
-	gcc -g shell.o parseargs.o execcom.o io.o -o main
+all: shell.o redirect.o parseargs.o io.o execcom.o
+	gcc -g shell.o redirect.o parseargs.o execcom.o io.o -o main
 
 debug: all
 	gdb -tui main
@@ -9,6 +9,9 @@ test: test.c io.o
 
 rtest: test
 	./test
+
+redirect.o: redirect.c redirect.h
+	gcc -g -c redirect.c
 
 io.o: io.c io.h
 	gcc -g -c io.c
