@@ -23,7 +23,7 @@ execcom.o: execcom.c execcom.h
 	gcc -g -c execcom.c
 
 clean:
-	rm *.o main test
+	rm *.o main test *.log
 
 run: all
 	./main

@@ -26,25 +26,18 @@ void printprompt() {
 }
 
 int main() {
-  int save_stdout = dup(STDOUT_FILENO);
-  int save_stdin = dup(STDIN_FILENO);
 	while(1) {
 		unsigned char * line = calloc(1000, sizeof(char));
 		printprompt();
-    //dup2(save_stdout, STDOUT_FILENO);
-    //dup2(save_stdin, STDIN_FILENO);
-    //fflush(stdin);
-    //fflush(stdout);
     liveRead(line, 1000);
-
     char ** semiColons = parse_argsSemiColon(line);
 		int i = 0;
+
 		while(semiColons[i]) {
       execcom_redir(semiColons[i]);
       i++;
 		}
     free(line);
-
 	}
 
 	return 0;

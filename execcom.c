@@ -18,9 +18,10 @@ void execcom_redir(char * com) {
   int reg_stdin = dup(STDIN_FILENO);
   int outf = -1;
   int inf = -1; //output + input files
-  char ** cpy = malloc(1000 * sizeof(char *));
+  char ** cpy = calloc(1000, sizeof(char *));
   int nargc = 0;
 
+  //Deal with redirect symbols
   for(int i = 0; i < argc; i++) {
     if(!strcmp(argv[i], ">")) {
       if(i + 1 >= argc) {
@@ -51,6 +52,7 @@ void execcom_redir(char * com) {
   }
   //null terminate argv array
   cpy[nargc] = NULL;
+ 
   //Execute command
   execcom_piping(nargc, cpy);
 
@@ -75,22 +77,32 @@ void execcom_redir(char * com) {
   close(reg_stdin);
 }
 
-void execcom_piping(int argc, char ** argv) {
+void execcom_piping(int argc, char ** argv) { 
+  //int clog = open("char.log", O_CREAT | O_WRONLY | O_APPEND, 0644);
+  
+  //printf("%d", argc); 
+  //write(clog, argv[0], sizeof(argv[0]) * sizeof(char));
+  //char nl = '\n';
+  //write(clog, &nl, sizeof(char));
+
   int cc = 0; //current command in comarr
   int ccargv = 0; //current arg in current command
-  struct command * comarr = malloc(argc * sizeof(struct command));
-  comarr[cc].argv = malloc(argc * sizeof(char **));
-  for(int i; i < argc; i++) {
+  struct command * comarr = calloc(argc, sizeof(struct command));
+  comarr[cc].argv = calloc(argc, sizeof(char **));
+
+  for(int i = 0; i < argc; i++) {
     if(!strcmp(argv[i], "|")) {
+      comarr[cc].argv[ccargv] = NULL;
       cc++;
       ccargv = 0;
-      comarr[cc].argv = malloc(argc * sizeof(char **));
+      comarr[cc].argv = calloc(argc + 1, sizeof(char **));
     } else {
       comarr[cc].argv[ccargv] = argv[i];
       (comarr[cc].argc)++;
       ccargv++;
     }
   }
+  comarr[cc].argv[ccargv] = NULL;
   //Input file descriptor, and array of pip file descriptors
   int infd, pfd[2];
   infd = STDIN_FILENO;
@@ -103,13 +115,12 @@ void execcom_piping(int argc, char ** argv) {
     //no use for old write end when done
     close(pfd[1]);
     free(comarr[i].argv);
+    free(comarr + i);
     //give new read end to next prog
     infd = pfd[0];
   }
 
   makeproc(infd, STDOUT_FILENO, comarr + i); 
-  //fflush(stdout);
-  //fflush(stdin);
   free(comarr);
 }
 
