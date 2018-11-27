@@ -13,8 +13,6 @@ char ** parse_argsSemiColon(char * line) {
 	return arr;
 }
 
-
-
 char ** parse_argsSpace(int * argc, char * line) {
 	char ** arr = malloc(1000 * sizeof(char *));
 	int i = 0;
@@ -61,3 +59,9 @@ void clean_str(char *str) {
 	replace_multi_string(str);
 	trim_whitespace(str);
 }
+
+
+// char * hasPipe(char * line) {
+//   char * p = strchr(line, '|');
+//   return p;
+// }

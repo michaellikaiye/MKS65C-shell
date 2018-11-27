@@ -26,7 +26,7 @@ void handle_redirect(char * com) {
       if(i + 1 >= argc) {
         printf("fysh: >: output file required\n");
       } else {
-        outf = open(argv[i+1], O_CREAT | O_WRONLY, 0644); 
+        outf = open(argv[i+1], O_CREAT | O_WRONLY, 0644);
         if(outf == -1) {
           printf("fysh: >: %s\n", strerror(errno));
         }
@@ -44,6 +44,29 @@ void handle_redirect(char * com) {
         dup2(inf, STDIN_FILENO);
         i++;
       }
+    } else if (!strcmp(argv[i], ">>")) {
+      if(i + 1 >= argc) {
+        printf("fysh: >>: output file required\n");
+      } else {
+        outf = open(argv[i+1], O_CREAT | O_WRONLY | O_APPEND, 0644);
+        if(outf == -1) {
+          printf("fysh: >>: %s\n", strerror(errno));
+        }
+        dup2(outf, STDOUT_FILENO);
+        i++;
+      }
+    } else if (!strcmp(argv[i], "<<")) {
+      if(i + 1 >= argc) {
+        printf("fysh: <<: input file required\n");
+      } else {
+        inf = open(argv[i + 1], O_RDONLY);
+        if(inf == -1) {
+          printf("fysh: <<: %s\n", strerror(errno));
+        }
+        printf("<< yet to work\n");
+        dup2(inf, STDIN_FILENO);
+        i++;
+      }
     } else {
       cpy[nargc] = argv[i];
       nargc++;
@@ -51,7 +74,7 @@ void handle_redirect(char * com) {
   }
   //null terminate argv array
   cpy[nargc] = NULL;
- 
+
   //Execute command
   handle_pipes(nargc, cpy);
 
@@ -69,8 +92,8 @@ void handle_redirect(char * com) {
   }
   dup2(reg_stdout, STDOUT_FILENO);
   dup2(reg_stdin, STDIN_FILENO);
-  
-  fflush(stdout); 
+
+  fflush(stdout);
   fflush(stdin);
   close(reg_stdout);
   close(reg_stdin);
