@@ -13,10 +13,7 @@ char ** parse_argsSemiColon(char * line) {
 	return arr;
 }
 
-char * hasPipe(char * line) {
-  char * p = strchr(line, '|');
-  return p;
-}
+
 
 char ** parse_argsSpace(int * argc, char * line) {
 	char ** arr = malloc(1000 * sizeof(char *));

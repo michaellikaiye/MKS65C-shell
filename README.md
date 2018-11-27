@@ -1,51 +1,61 @@
 # MKS65C-shell
+# FYSH
+- by Oliver Frank and Michael Ye
+## To do:
+- replacing ~/ with home directory,  
+- tab completion  
+- redirects using >>, <<
+- History (print inline)
+- Partial history completion
+- Quoting/String handling("" '' "${VARNAME})
+- Global variables($var)
+- Prompt
+- Alias
+- Control flow
+- Functions
+- TBC
+## Features:
+- Left, right arrows working  
+- Forks and executes commands  
+- Backspace working  
+- Redirects using >, <  
+- Parses multiple commands on one line  
+- Pipes working  
+## Attempted:
+The following did not end up working, but have been left in the code, commented out.
+- arrows...
+## Bugs:
+- Putting two ;'s next to each other will break the parser
+- Redirecting to a file that does not exist occasionally does not work.  
+## Files & Function Headers:
+### parse.c
+Handles all line parsing functions
 
-## Order of Things To Do 
-1. Organize
-2. Fully debug what we have
-3. Complete all features of assignment
-4. History (print inline)
-5. Partial history completion
-6. Quoting/String handling("" '' "${VARNAME})
-7. Global variables($var)
-8. Prompt
-9. Alias
-10. Control flow
-11. Functions
-12. TBC
+- parse_argsSemiColon  
+Inputs: char * line  
+Fills an array with strings where each entry is separated by a ';'  
+Returns: char **
+- parse_argsSpace  
+Inputs: int \* argc, char * line  
+Returns: char **  
+Fills an array with strings where each entry is separated by a ' '  
+Sets argc to the number of entries
+- replace_multi_string  
+Inputs: char * str  
+Returns: void  
+IDK
 
-2018-11-19 Don't be a shell out...
-Goal: Write your own shell.
-  Read a line at a time, parse the line to separate the command from its arguments. It should then fork and exec the command. The parent process should wait until the exec'd program exits and then it should read the next command.
-  
-  Note: exit and cd cannot be run through a forked child process, you will have to implement these commands on your own.
-  check out the chdir() function
+- trim_whitespace  
+Inputs: char * str  
+Returns: void  
+Removes whitespace from input
+- clean_str  
+Inputs: char * str  
+Returns: void  
+replace_multi_string and trim_whitespace
+-
+Inputs:
+Returns:
 
-  Read and separate multiple commands on one line with ;. That is, the line ls -l ; echo hello should first run the command ls -l and then echo hello.  
-
-  Implement simple redirection using > (redirecting stdout) and < (redirecting stdin). - This will be explained in class after Thanksgiving.
-
-  Implement simple pipes, that is: ls | wc would run ls and use the output from ls as the input for wc. - This will be explained in class after Thanksgiving.
-
-  Check out popen() for this.
-
-  All of these commands work in bash, so use it to check out the functionality of each feature if you are unclear about anything.
-
-Specific requirements
-Every function you write must have a function header describing the arguments, return value and what the function does.
-Use modular design liberally. This is a large program.
-You should have a readme file with the following:
-A description of what features your shell implements
-A description of what features you attempted to implement but were unsuccessful
-Any bugs or things you want me to know about your program
-I am much more forgiving of reported bugs than bugs I discover while testing
-A copy of every function header
-An example of the readme file can be found in the github repository for this assignment
-This project should use separate C files as necessary.
-The project should be built using make and a makefile, I will only compile by using make.
-Try starting with these restrictions on input:
-To make your life easier, you could require that all items on the command line are to be separated by a single space.
-When parsing the line, it might help to count the number of tokens (individual pieces), before parsing.
-You can restrict the locations and ordering of > and <.
-You can limit piping (|) to a single pipe.
-If you would like to implement other features after getting these ones down, please do. Look at what bash does and see what else you can do!
+dwsh.c
+	Handles the forking an executing of commands...
