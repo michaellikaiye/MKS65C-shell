@@ -36,7 +36,6 @@ unsigned char * getch() {
 }
 
 void liveRead(unsigned char * line, int count) {
-  int logf = open("fysh.log", O_CREAT | O_WRONLY | O_APPEND, 0644);
   unsigned char * ch;
   int cursorpos = 0;
   int ncp = 0; //new cursorpos
@@ -80,33 +79,65 @@ void liveRead(unsigned char * line, int count) {
       while(line[bp] != ' ' && bp) {
         bp--;
       }
-      if(line[bp] == ' ')
+      if(line[bp] == ' ') {
         bp++;
+      }
 
       strncpy(path, line + bp, cursorpos - bp);
-      //Open cwd
-      DIR * d;
-      d = opendir(".");
-      struct dirent *entry;
-      char ** dirnames = calloc(5000, sizeof(char));
-      int currdir = 0;
-      while(entry = readdir(d)) {
-        if(strncmp(entry->d_name, path, strlen(path))) {
-          dirnames[currdir] = entry->d_name;
-          currdir++;
+      if(strlen(path)) {
+        //Open cwd
+        DIR * d; 
+        d = opendir(".");
+        struct dirent *entry;
+        char ** dirnames = calloc(5000, sizeof(char));
+        int currdir = 0;
+        while(entry = readdir(d)) {
+          if(!strncmp(entry->d_name, path, strlen(path))) {
+            dirnames[currdir] = calloc(1000, sizeof(char));
+            strcpy(dirnames[currdir], entry->d_name);
+            currdir++;
+          }
         }
-      }
-      if(currdir == 1) {
-        int addcursor = strlen(dirnames[currdir - 1]) - strlen(path);
+        closedir(d);
+          
+        if(currdir == 1) {
+          if(strcmp(path, dirnames[currdir - 1])) {
+            char * tmp = (char *) calloc(1000, sizeof(char));
+            strncpy(tmp, line, bp);
+            int len = strlen(tmp);
+            strcat(tmp + len, line + cursorpos);
+            strcpy(line, tmp);
+            free(tmp);
+            
+          
+            tmp = (char *) calloc(1000, sizeof(char));
+
+            strncpy(tmp, line, cursorpos);
+            len = strlen(tmp);
+            strcat(tmp + len, dirnames[currdir - 1]);
+            int dirlen = strlen(dirnames[currdir - 1]);
+            len += dirlen; 
+            strcat(tmp + len, line + cursorpos);
+            len += strlen(line + cursorpos);
+            strncpy(line, tmp, len);
+
+            
+            ncp += dirlen - strlen(path);
+            
+            size += dirlen - strlen(path); 
+            free(tmp);
+           }
+        }
         
-        write(logf, dirnames[currdir -1], strlen(dirnames[currdir - 1]) * sizeof(char));
-      
-        //print newline
-        char nl = '\n';
-        write(logf, &nl, sizeof(char));
+        for(int i = 0; i < currdir; i++) {
+          free(dirnames[i]);
+        }
+        free(dirnames);
       }
+      free(path);
     } else if (*ch >= 32 && *ch <= 126) {
       char * tmp = (char *) calloc(1000, sizeof(char));
+
       strncpy(tmp, line, cursorpos);
       int len = strlen(tmp); 
       strncat(tmp + len, ch, 1);
@@ -115,6 +146,7 @@ void liveRead(unsigned char * line, int count) {
       strcpy(line, tmp);
       ncp++;
       size++;
+      free(tmp);
     }
     
     cursorbackward(cursorpos);
