@@ -18,11 +18,35 @@
 #define GRN  "\x1B[32m"
 #define BLU  "\x1B[34m"
 
+char * niceDir(char * name) {
+	char * tdir = calloc(1000, sizeof(char));
+  if (strlen(name) > 5 && strncmp ("/home", name, 5) == 0) {
+			char c;
+			int sc = 0;
+			c = '/';
+			for( ; *name != '\0'; ++name) {
+				if(*name == c)
+					sc++;
+				if(sc == 3) //skip 3 slashes... can be changed
+					break;
+			}
+
+			strncpy (tdir + 1, name, 1000);
+      tdir[0] = '~';
+      return tdir;
+    }
+  else
+    return name;
+}
+
+
 void printprompt() {
 	char * name = getenv("USER");
 	char curDir[1000];
 	getcwd(curDir, sizeof(curDir));
+	strcpy(curDir, niceDir(curDir));
 	printf("%s%s:%s%s$ %s", GRN, name, BLU, curDir, NRM);
+
 }
 
 int main() {
