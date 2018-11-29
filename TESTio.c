@@ -16,7 +16,7 @@
 #define KEY_ESC 27
 #define KEY_ENT 10
 #define KEY_TAB 9
-//replace write with printf or other way around? inconsistant 
+//replace write with printf or other way around? inconsistant
 
 
 /* reads from keypress, doesn't echo */
@@ -36,18 +36,45 @@ unsigned char * getch() {
 }
 
 void liveRead(unsigned char * line, int count) {
+  int linf = open("fysh.lines", O_CREAT | O_RDWR | O_APPEND, 0644); //diff
   int logf = open("fysh.log", O_CREAT | O_WRONLY | O_APPEND, 0644);
+  char history[1000][1000];
+  int hc = 0;
+  char * hisbuf = calloc(1000, sizeof(char));
+  int r = read(linf, hisbuf, 1000);
+  //hisbuf = "ls\nhi\nexit\n";
+  int bufc = 0;
+  int chac = 0;
+  int hislen = strlen(hisbuf);
+
+  printf("%d",hislen);
+  for(bufc; bufc < hislen; bufc++) {
+    if(*(hisbuf +bufc) != '\n') {
+      history[hc][chac] = *(hisbuf +bufc);
+      chac++;
+    } else {
+      hc++;
+      chac = 0;
+    }
+  }
+  int t = 0;
+  for(t;t<hc;t++) {
+    //printf("%s\n",history[t]);
+  }
   unsigned char * ch;
   int cursorpos = 0;
   int ncp = 0; //new cursorpos
   int size = 0;
+  int hloc = hc;
+  strcpy(history[hc], line);
+  hc++;
   while(*(ch = getch()) != KEY_ENT && cursorpos < count) {
     if(*ch == KEY_DEL) {
       if(cursorpos > 0) {
         strcpy(line + cursorpos - 1, line + cursorpos);
         ncp--;
         size--;
-      }       
+      }
     } else if (*ch == KEY_ESC) {
       unsigned char buf[3];
       buf[0] = *ch;
@@ -56,6 +83,7 @@ void liveRead(unsigned char * line, int count) {
       if(buf[1] == '[') {
         switch(buf[2]) {
 	        case 'A':
+            printf("%s\n", history[--hloc]);
 	          //printf("Up Arrow");
 	          break;
 	        case 'B':
@@ -73,7 +101,7 @@ void liveRead(unsigned char * line, int count) {
 	          break;
           }
         }
-      
+
     } else if (*ch == KEY_TAB) {
       char * path = (char *) calloc(1000, sizeof(char));
       int bp = cursorpos;
@@ -98,9 +126,9 @@ void liveRead(unsigned char * line, int count) {
       }
       if(currdir == 1) {
         int addcursor = strlen(dirnames[currdir - 1]) - strlen(path);
-        
+
         write(logf, dirnames[currdir -1], strlen(dirnames[currdir - 1]) * sizeof(char));
-      
+
         //print newline
         char nl = '\n';
         write(logf, &nl, sizeof(char));
@@ -108,7 +136,7 @@ void liveRead(unsigned char * line, int count) {
     } else if (*ch >= 32 && *ch <= 126) {
       char * tmp = (char *) calloc(1000, sizeof(char));
       strncpy(tmp, line, cursorpos);
-      int len = strlen(tmp); 
+      int len = strlen(tmp);
       strncat(tmp + len, ch, 1);
       len++;
       strcat(tmp + len, line + cursorpos);
@@ -116,7 +144,7 @@ void liveRead(unsigned char * line, int count) {
       ncp++;
       size++;
     }
-    
+
     cursorbackward(cursorpos);
     line[size] = '\0';
     printf("%s ", line);
@@ -126,6 +154,8 @@ void liveRead(unsigned char * line, int count) {
   }
   line[size] = '\0';
   printf("\n");
+
+  write(linf, line, strlen(line) * sizeof(char));
+  char nl = '\n';
+  write(linf, &nl, sizeof(char));
 }
-
-
