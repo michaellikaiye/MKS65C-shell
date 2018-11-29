@@ -18,7 +18,6 @@
 #define KEY_TAB 9
 //replace write with printf or other way around? inconsistant 
 
-
 /* reads from keypress, doesn't echo */
 unsigned char * getch() {
   struct termios old, new;
@@ -45,7 +44,7 @@ void liveRead(unsigned char * line, int count) {
   int chac = 0;
   int hislen = strlen(hisbuf);
 
-  printf("%d",hislen);
+  //printf("%d",hislen);
   for(bufc; bufc < hislen; bufc++) {
     if(*(hisbuf + bufc) != '\n') {
       history[hc][chac] = *(hisbuf + bufc);
@@ -79,10 +78,20 @@ void liveRead(unsigned char * line, int count) {
       if(buf[1] == '[') {
         switch(buf[2]) {
 	        case 'A':
-            printf("%s\n", history[--hloc]);
+            if(hloc > 0) {
+              strcpy(line, history[--hloc]);
+              size = strlen(line);
+              ncp = strlen(line);
+            }
+            //printf("%s\n", history[--hloc]);
 	          //printf("Up Arrow");
 	          break;
 	        case 'B':
+            if(hloc < hc) {
+              strcpy(line, history[++hloc]);
+              size = strlen(line);
+              ncp = strlen(line);
+            }
 	          //printf("Down Arrow");
 	          break;
 	        case 'C':
@@ -133,7 +142,6 @@ void liveRead(unsigned char * line, int count) {
             strcat(tmp + len, line + cursorpos);
             strcpy(line, tmp);
             free(tmp);
-            
           
             tmp = (char *) calloc(1000, sizeof(char));
 
@@ -175,8 +183,12 @@ void liveRead(unsigned char * line, int count) {
     
     cursorbackward(cursorpos);
     line[size] = '\0';
-    printf("%s ", line);
-    cursorbackward(size + 1);
+    printf("%s", line);
+    for(int i = 0; i < (cursorpos - ncp); i++) {        
+      printf(" ");
+    }
+    cursorbackward(cursorpos - ncp);
+    cursorbackward(size);
     cursorforward(ncp);
     cursorpos = ncp;
   }

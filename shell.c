@@ -21,11 +21,10 @@
 void niceDir(char * name) {
   if (strlen(name) > 5 && strncmp ("/home", name, 5) == 0) {
 	    char tdir[1000];
-			char c;
+			char c = '/';
 			int sc = 0;
-			c = '/';
-			for( ; *name != '\0'; ++name) {
-				if(*name == c)
+			for(int i = 0 ; name[i] != '\0'; ++i) {
+				if(name[i] == c)
 					sc++;
 				if(sc == 3) //skip 3 slashes... can be changed
 					break;
@@ -33,6 +32,7 @@ void niceDir(char * name) {
 
 			strncpy (tdir + 1, name, 1000);
       tdir[0] = '~';
+      
       strcpy(name, tdir);
     }
 }
@@ -42,7 +42,7 @@ void printprompt() {
 	char curDir[1000];
 	getcwd(curDir, 1000);
   niceDir(curDir);
-	printf("%s%s:%s%s$ %s", GRN, name, BLU, curDir, NRM);
+	printf("%s%s:%s%s%s$ ", GRN, name, BLU, curDir, NRM);
 }
 
 int main() {
@@ -59,6 +59,7 @@ int main() {
       handle_redirect(semiColons[i]);
       i++;
 		}
+    free(semiColons);
     free(line);
     dup2(reg_stdout, STDOUT_FILENO);
     dup2(reg_stdin, STDIN_FILENO);
