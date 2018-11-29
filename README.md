@@ -3,6 +3,7 @@
 ##### by Oliver Frank and Michael Ye
 
 ## To do:
+- # comments
 - replacing ~/ with home directory,  
 - tab completion  
 - redirects using >>, <<
