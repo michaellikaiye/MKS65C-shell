@@ -1,4 +1,4 @@
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -10,10 +10,10 @@
 #include "pipe.h"
 #include "execcom.h"
 
-void handle_pipes(int argc, char ** argv) { 
+void handle_pipes(int argc, char ** argv) {
   //int clog = open("char.log", O_CREAT | O_WRONLY | O_APPEND, 0644);
-  
-  //printf("%d", argc); 
+
+  //printf("%d", argc);
   //write(clog, argv[0], sizeof(argv[0]) * sizeof(char));
   //char nl = '\n';
   //write(clog, &nl, sizeof(char));
@@ -39,7 +39,7 @@ void handle_pipes(int argc, char ** argv) {
   //Input file descriptor, and array of pip file descriptors
   int infd, pfd[2];
   infd = STDIN_FILENO;
-  
+
   int i;
   for(i = 0; i < cc; i++) {
     pipe(pfd);
@@ -52,8 +52,6 @@ void handle_pipes(int argc, char ** argv) {
     infd = pfd[0];
   }
 
-  makeproc(infd, STDOUT_FILENO, comarr + i); 
+  makeproc(infd, STDOUT_FILENO, comarr + i);
   free(comarr);
 }
-
-

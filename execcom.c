@@ -1,4 +1,4 @@
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -9,14 +9,14 @@
 
 #include "parseargs.h"
 #include "execcom.h"
-int makeproc(int infd, int outfd, struct command *com) { 
+int makeproc(int infd, int outfd, struct command *com) {
   //Child proc and handle builtins
-  if(!strcmp(com->argv[0], "exit")) {
+  if(!strncmp(com->argv[0], "exit", 4)) {
     exit(0);
-  } 
+  }
   else if(!strcmp(com->argv[0], "cd")) {
     cd(com);
-  } else { 
+  } else {
     pid_t cpid;
     cpid = fork();
     if(cpid == -1) {
@@ -43,8 +43,9 @@ void execprog(struct command *com) {
   if(execvp(com->argv[0], com->argv) == -1) {
     if(strcmp(com->argv[0], ""))
       printf("fysh: %s: %s\n",com->argv[0], strerror(errno));
+    exit(0); //error!
     // else input is nothing so do nothing
-  } 
+  }
 }
 
 int cd(struct command *com) {
@@ -58,5 +59,3 @@ int cd(struct command *com) {
   }
   return 0;
 }
-
-

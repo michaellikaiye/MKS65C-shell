@@ -56,7 +56,7 @@ int main() {
 		unsigned char * line = calloc(1000, sizeof(char));
 		printprompt();
     liveRead(line, 1000);
-    char ** semiColons = parse_argsSemiColon(line);
+    char ** semiColons = parse_argsSemiColon((char *)line);
 		int i = 0;
 
 		while(semiColons[i]) {
