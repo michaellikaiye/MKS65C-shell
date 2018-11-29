@@ -36,10 +36,34 @@ unsigned char * getch() {
 }
 
 void liveRead(unsigned char * line, int count) {
+  int linf = open("fysh.lines", O_CREAT | O_RDWR | O_APPEND, 0644); //diff
+  char history[1000][1000];
+  int hc = 0;
+  char * hisbuf = calloc(1000, sizeof(char));
+  int r = read(linf, hisbuf, 1000);
+  int bufc = 0;
+  int chac = 0;
+  int hislen = strlen(hisbuf);
+
+  printf("%d",hislen);
+  for(bufc; bufc < hislen; bufc++) {
+    if(*(hisbuf + bufc) != '\n') {
+      history[hc][chac] = *(hisbuf + bufc);
+      chac++;
+    } else {
+      hc++;
+      chac = 0;
+    }
+  }
+
   unsigned char * ch;
   int cursorpos = 0;
   int ncp = 0; //new cursorpos
   int size = 0;
+  int hloc = hc;
+  strcpy(history[hc], line);
+  hc++;
+
   while(*(ch = getch()) != KEY_ENT && cursorpos < count) {
     if(*ch == KEY_DEL) {
       if(cursorpos > 0) {
@@ -55,6 +79,7 @@ void liveRead(unsigned char * line, int count) {
       if(buf[1] == '[') {
         switch(buf[2]) {
 	        case 'A':
+            printf("%s\n", history[--hloc]);
 	          //printf("Up Arrow");
 	          break;
 	        case 'B':
@@ -137,7 +162,6 @@ void liveRead(unsigned char * line, int count) {
       free(path);
     } else if (*ch >= 32 && *ch <= 126) {
       char * tmp = (char *) calloc(1000, sizeof(char));
-
       strncpy(tmp, line, cursorpos);
       int len = strlen(tmp); 
       strncat(tmp + len, ch, 1);
@@ -158,4 +182,8 @@ void liveRead(unsigned char * line, int count) {
   }
   line[size] = '\0';
   printf("\n");
+
+  write(linf, line, strlen(line) * sizeof(char));
+  char nl = '\n';
+  write(linf, &nl, sizeof(char));
 }
