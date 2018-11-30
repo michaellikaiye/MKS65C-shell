@@ -7,6 +7,8 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/types.h>
+#include <pwd.h>
+#include <errno.h>
 
 #include "io.h"
 
@@ -35,7 +37,14 @@ unsigned char * getch() {
 }
 
 void liveRead(unsigned char * line, int count) {
-  int linf = open("fysh.lines", O_CREAT | O_RDWR | O_APPEND, 0644); //diff
+  struct passwd *pw = getpwuid(getuid());
+  char homedir[1000];
+  strcpy(homedir, pw->pw_dir);
+  strcat(homedir, "/fysh.lines");
+  int linf = open(homedir, O_CREAT | O_RDWR | O_APPEND, 0644); //diff
+  if(linf == -1) {
+    printf("%s\n", strerror(errno));
+  }
   char history[1000][1000];
   int hc = 0;
   char * hisbuf = calloc(1000, sizeof(char));
@@ -109,6 +118,7 @@ void liveRead(unsigned char * line, int count) {
       
     } else if (*ch == KEY_TAB) {
       char * path = (char *) calloc(1000, sizeof(char));
+      char * openpath[1000];
       int bp = cursorpos;
       while(line[bp] != ' ' && bp) {
         bp--;
@@ -125,41 +135,83 @@ void liveRead(unsigned char * line, int count) {
         struct dirent *entry;
         char ** dirnames = calloc(5000, sizeof(char));
         int currdir = 0;
+        //Get dir entries
+        int longestDir = 0;
         while(entry = readdir(d)) {
           if(!strncmp(entry->d_name, path, strlen(path))) {
             dirnames[currdir] = calloc(1000, sizeof(char));
             strcpy(dirnames[currdir], entry->d_name);
+            if(strlen(dirnames[currdir]) > longestDir)
+              longestDir = strlen(dirnames[currdir]);
             currdir++;
           }
         }
         closedir(d);
-          
-        if(currdir == 1) {
-          if(strcmp(path, dirnames[currdir - 1])) {
+        //Check that there's only one completion posibility
+        if(currdir > 0) {
+            //remove path to be rewritten
             char * tmp = (char *) calloc(1000, sizeof(char));
             strncpy(tmp, line, bp);
             int len = strlen(tmp);
             strcat(tmp + len, line + cursorpos);
             strcpy(line, tmp);
             free(tmp);
-          
+            
+            //write full filename to prompt
             tmp = (char *) calloc(1000, sizeof(char));
 
             strncpy(tmp, line, cursorpos);
             len = strlen(tmp);
-            strcat(tmp + len, dirnames[currdir - 1]);
-            int dirlen = strlen(dirnames[currdir - 1]);
-            len += dirlen; 
+            int dirlen;
+            char * newPath = calloc(1000, sizeof(char));
+            if(currdir > 1) {
+              strcat(tmp,path);
+              len += strlen(path);
+              dirlen += strlen(path);
+              dirlen = strlen(path);
+              for(int j = strlen(path); j < longestDir; j++) {
+                char cchar = dirnames[0][j];
+                char allsame = 1;
+                for(int i = 0; i < currdir; i++) {
+                  if(j >= strlen(dirnames[i]) || dirnames[i][j] != cchar) {
+                    allsame = 0;
+                  } 
+                }
+                if(!allsame) {
+                  break;
+                } else {
+                  strncat(tmp, &cchar, 1);
+                  len++;
+                  dirlen++;
+                }
+              }
+            } else {
+              strcat(tmp + len, dirnames[currdir - 1]);
+              strcpy(newPath, dirnames[currdir - 1]);
+              dirlen = strlen(dirnames[currdir - 1]);
+              len += dirlen; 
+            }
+            d = opendir(".");
+            if(strlen(newPath) > 0) {
+              while(entry = readdir(d)) {
+                if(!strcmp(entry->d_name, newPath)) {
+                  if(entry->d_type == DT_DIR) {
+                    strcat(tmp + len, "/");
+                    len++;
+                    dirlen++;
+                  }
+                }
+              }
+            }
+            closedir(d);
             strcat(tmp + len, line + cursorpos);
             len += strlen(line + cursorpos);
             strncpy(line, tmp, len);
-
             
             ncp += dirlen - strlen(path);
             
             size += dirlen - strlen(path); 
             free(tmp);
-           }
         }
         
         for(int i = 0; i < currdir; i++) {

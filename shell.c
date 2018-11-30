@@ -18,30 +18,44 @@
 #define GRN  "\x1B[32m"
 #define BLU  "\x1B[34m"
 
-void niceDir(char * name) {
-  if (strlen(name) > 5 && strncmp ("/home", name, 5) == 0) {
-	    char tdir[1000];
-			char c = '/';
-			int sc = 0;
-			for(int i = 0 ; name[i] != '\0'; ++i) {
-				if(name[i] == c)
-					sc++;
-				if(sc == 3) //skip 3 slashes... can be changed
-					break;
-			}
-
-			strncpy (tdir + 1, name, 1000);
-      tdir[0] = '~';
-      
-      strcpy(name, tdir);
+char * niceDir(char * name) {
+  char ** arr = calloc(1000, sizeof(char *));
+  char cpy[1000];
+  strcpy(cpy, name);
+  int i = 0;
+  while(name) {
+    arr[i] = strsep(&name, "/");
+    i++;
+  }
+  name = calloc(1000, sizeof(char));
+  int j;
+  for(j = 0; j < i; j++) {
+    if(!strcmp(arr[j], getenv("USER"))) {
+      break;
     }
+  }
+  if(j != i) {
+    j++;
+    strcpy(name, "~");
+    for(; j < i; j++) {
+      strcat(name, "/");
+      strcat(name, arr[j]);
+    }
+  }
+  else {
+    strcpy(name, cpy);
+  }
+  free(arr);
+  return name;
 }
 
 void printprompt() {
 	char * name = getenv("USER");
 	char curDir[1000];
 	getcwd(curDir, 1000);
-  niceDir(curDir);
+  char * dir = niceDir(curDir);
+  strcpy(curDir, dir);
+  free(dir);
 	printf("%s%s:%s%s%s$ ", GRN, name, BLU, curDir, NRM);
 }
 
