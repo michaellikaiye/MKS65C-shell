@@ -4,9 +4,7 @@
 
 ## To do:
 - replacing ~/ with home directory,  
-- tab completion  
-- redirects using >>, <<
-- History (print inline)
+- tab completion (OLIVER)
 - Partial history completion
 - Quoting/String handling("" '' "${VARNAME})
 - Global variables($var)
