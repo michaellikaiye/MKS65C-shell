@@ -7,29 +7,30 @@
 - replacing ~/ with home directory,  
 - tab completion (OLIVER)
 - Partial history completion
-- Quoting/String handling("" '' "${VARNAME})
+- more redirects 2> <2 <& &> <<& &>> <<2 2>>
+- Quoting/String handling("" '' ${VARNAME})
 - Global variables($var)
-- Prompt
 - Alias
 - Control flow
 - Functions
 - TBC
+- ERRORS ERRORS ERRORS (change printf to perror)
 
 ## Features:
 - Left, right arrows working  
 - Forks and executes commands  
 - Backspace working  
-- Redirects using >, <  
+- Redirects using >, <, <<, >> 
 - Parses multiple commands on one line  
 - Pipes working  
 
 ## Attempted:
 The following did not end up working, but have been left in the code, commented out.
-- arrows...
 
 ## Bugs:
-- Putting two ;'s next to each other will break the parser
-- Redirecting to a file that does not exist occasionally does not work.  
+- hitting down twice adds empty string to history buff
+- when operating on a file with git (i.e. "git rm FILE.FE"), malloc() throws error and crashes
+- malloc randomly dies during liveRead
 
 ## Files & Function Headers:
 ### parse.c

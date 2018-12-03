@@ -40,7 +40,7 @@ void liveRead(unsigned char * line, int count) {
   struct passwd *pw = getpwuid(getuid());
   char homedir[1000];
   strcpy(homedir, pw->pw_dir);
-  strcat(homedir, "/fysh.lines");
+  strcat(homedir, "/.fysh.lines");
   int linf = open(homedir, O_CREAT | O_RDWR | O_APPEND, 0644); //diff
   if(linf == -1) {
     printf("%s\n", strerror(errno));
@@ -129,6 +129,8 @@ void liveRead(unsigned char * line, int count) {
 
       strncpy(path, line + bp, cursorpos - bp);
       if(strlen(path)) {
+        char * openpath[1000];
+        int lastslash = 0;
         //Open cwd
         DIR * d; 
         d = opendir(".");

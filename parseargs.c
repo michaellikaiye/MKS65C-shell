@@ -38,7 +38,7 @@ void replace_multi_string(char *str) {
 }
 
 void trim_whitespace(char *str) {
-	char * cpy = (char *) malloc(strlen(str));
+	char * cpy = (char *) calloc(1, strlen(str));
 	strcpy(cpy, str);
 	while((unsigned char) *cpy == ' ') {
 		cpy++;
