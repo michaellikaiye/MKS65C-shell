@@ -70,13 +70,14 @@ int main() {
 	while(1) {
 		unsigned char * line = calloc(1000, sizeof(char));
     //print term prompt (not dynamic :( )
-		printprompt(); 
+		printprompt();
     //read line, delineated by ENTER
     liveRead(line, 1000, origpath);
     //replace tilde with home dir
-    char * homedirparsed = parse_argsHomeDir((char *) line);
+    char * newLine = parse_comments((char *) line);
+    char * homedirparsed = parse_argsHomeDir(newLine);
     //parse strings delineated by semicolons
-    char ** semiColons = parse_argsSemiColon((char *) homedirparsed);
+    char ** semiColons = parse_argsSemiColon(homedirparsed);
 		int i = 0;
 
 		while(semiColons[i]) {

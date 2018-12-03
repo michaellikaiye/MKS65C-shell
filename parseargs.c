@@ -4,6 +4,17 @@
 #include "parseargs.h"
 #include <pwd.h>
 
+char * parse_comments(char * line) {
+	char newLine[1000];
+	strcpy(newLine, line);
+	char * loc = strchr(newLine, '#');
+	if(loc != NULL && *(loc - 1) == ' ')
+		*(loc) = '\0';
+	char * re = calloc(1, sizeof(char *));
+	strcpy(re, newLine);
+	return re;
+}
+
 //Parse line into semicolon delineated tokens
 char ** parse_argsSemiColon(char * line) {
 	char ** arr = calloc(1000, sizeof(char *));
