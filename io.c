@@ -18,7 +18,7 @@
 #define KEY_ESC 27
 #define KEY_ENT 10
 #define KEY_TAB 9
-//replace write with printf or other way around? inconsistant 
+//replace write with printf or other way around? inconsistant
 
 /* reads from keypress, doesn't echo */
 unsigned char * getch() {
@@ -78,7 +78,7 @@ void liveRead(unsigned char * line, int count) {
         strcpy(line + cursorpos - 1, line + cursorpos);
         ncp--;
         size--;
-      }       
+      }
     } else if (*ch == KEY_ESC) {
       unsigned char buf[3];
       buf[0] = *ch;
@@ -88,6 +88,9 @@ void liveRead(unsigned char * line, int count) {
         switch(buf[2]) {
 	        case 'A':
             if(hloc > 0) {
+              if (hloc == hc - 1) {
+                strcpy(history[hc-1], line);
+              }
               strcpy(line, history[--hloc]);
               size = strlen(line);
               ncp = strlen(line);
@@ -96,7 +99,7 @@ void liveRead(unsigned char * line, int count) {
 	          //printf("Up Arrow");
 	          break;
 	        case 'B':
-            if(hloc < hc) {
+            if(hloc < hc - 1) {
               strcpy(line, history[++hloc]);
               size = strlen(line);
               ncp = strlen(line);
@@ -115,7 +118,7 @@ void liveRead(unsigned char * line, int count) {
 	          break;
           }
         }
-      
+
     } else if (*ch == KEY_TAB) {
       char * path = (char *) calloc(1000, sizeof(char));
       char * openpath[1000];
@@ -132,7 +135,7 @@ void liveRead(unsigned char * line, int count) {
         char * openpath[1000];
         int lastslash = 0;
         //Open cwd
-        DIR * d; 
+        DIR * d;
         d = opendir(".");
         struct dirent *entry;
         char ** dirnames = calloc(5000, sizeof(char));
@@ -158,7 +161,7 @@ void liveRead(unsigned char * line, int count) {
             strcat(tmp + len, line + cursorpos);
             strcpy(line, tmp);
             free(tmp);
-            
+
             //write full filename to prompt
             tmp = (char *) calloc(1000, sizeof(char));
 
@@ -177,7 +180,7 @@ void liveRead(unsigned char * line, int count) {
                 for(int i = 0; i < currdir; i++) {
                   if(j >= strlen(dirnames[i]) || dirnames[i][j] != cchar) {
                     allsame = 0;
-                  } 
+                  }
                 }
                 if(!allsame) {
                   break;
@@ -191,7 +194,7 @@ void liveRead(unsigned char * line, int count) {
               strcat(tmp + len, dirnames[currdir - 1]);
               strcpy(newPath, dirnames[currdir - 1]);
               dirlen = strlen(dirnames[currdir - 1]);
-              len += dirlen; 
+              len += dirlen;
             }
             d = opendir(".");
             if(strlen(newPath) > 0) {
@@ -209,13 +212,13 @@ void liveRead(unsigned char * line, int count) {
             strcat(tmp + len, line + cursorpos);
             len += strlen(line + cursorpos);
             strncpy(line, tmp, len);
-            
+
             ncp += dirlen - strlen(path);
-            
-            size += dirlen - strlen(path); 
+
+            size += dirlen - strlen(path);
             free(tmp);
         }
-        
+
         for(int i = 0; i < currdir; i++) {
           free(dirnames[i]);
         }
@@ -225,7 +228,7 @@ void liveRead(unsigned char * line, int count) {
     } else if (*ch >= 32 && *ch <= 126) {
       char * tmp = (char *) calloc(1000, sizeof(char));
       strncpy(tmp, line, cursorpos);
-      int len = strlen(tmp); 
+      int len = strlen(tmp);
       strncat(tmp + len, ch, 1);
       len++;
       strcat(tmp + len, line + cursorpos);
@@ -234,11 +237,11 @@ void liveRead(unsigned char * line, int count) {
       size++;
       free(tmp);
     }
-    
+
     cursorbackward(cursorpos);
     line[size] = '\0';
     printf("%s", line);
-    for(int i = 0; i < (cursorpos - ncp); i++) {        
+    for(int i = 0; i < (cursorpos - ncp); i++) {
       printf(" ");
     }
     cursorbackward(cursorpos - ncp);
