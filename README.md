@@ -24,8 +24,9 @@ Nothing in the code that is not functional (maybe not bug free though).
       (old_top == initial_top (av) && old_size == 0) ||
       ((unsigned long) (old_size) >= MINSIZE &&
       prev_inuse (old_top) && ((unsigned long) old_end
-      & (pagesize - 1)) == 0)
-- sometimes crashes on semicolon
+      & (pagesize - 1)) == 0)  
+
+- ~ tab completion
 
 ## Files & Function Headers:
 ### parse.c
