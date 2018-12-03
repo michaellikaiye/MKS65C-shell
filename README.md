@@ -74,9 +74,9 @@ Inputs:
 Returns: unsigned char *  
 Reads from keypress, doesn't echo
 
-- liveRead
-Inputs: unsigned char * line, int count
-Returns: void
+- liveRead  
+Inputs: unsigned char * line, int count  
+Returns: void  
 Puts line history into fysh.lines (WARNING: Currently placed in HOME)  
 Stores keypresses and prints when appropriate  
 Doesn't print for arrows and tab  
@@ -93,22 +93,22 @@ Takes a string and redirects STDIN, STDOUT, STDERR when necessary
 ### pipe.c
 Handles piping (|)
 
-- handle_pipes
-Inputs: int argc, char ** argv
-Returns:  void
+- handle_pipes  
+Inputs: int argc, char ** argv  
+Returns:  void  
 Takes the output after handle_redirect and pipes accordingly
 
 ### execcom.c
 Handles execution of commandline
 
 - makeproc
-Inputs: int infd, int outfd, struct command \*com
-Returns: int  0
+Inputs: int infd, int outfd, struct command \*com  
+Returns: int  
 Handles special commands (exit, cd)
 
 - execprog  
-Inputs: struct command \*com
-Returns: void
+Inputs: struct command \*com  
+Returns: void  
 Takes the char * array of com and executes the commands  
 Prints errors should they occur  
 
@@ -128,4 +128,5 @@ Takes a string and replaces /home/... with ~
 - main  
 Inputs:   
 Returns: int  
-Takes input from a user via liveRead and passes commands to handle_redirect, handle_pipes, and ultimately will be executed  
+Takes input from a user via liveRead and passes commands to  
+ handle_redirect, handle_pipes, and ultimately will be executed  
