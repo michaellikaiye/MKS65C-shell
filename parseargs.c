@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "parseargs.h"
+#include <pwd.h>
 
+//Parse line into semicolon delineated tokens
 char ** parse_argsSemiColon(char * line) {
 	char ** arr = calloc(1000, sizeof(char *));
 	int i = 0;
@@ -13,6 +16,21 @@ char ** parse_argsSemiColon(char * line) {
 	return arr;
 }
 
+//replace ~ with homedir
+char * parse_argsHomeDir(char * line) {
+  char * arr = calloc(1000, sizeof(char *));
+  int i;
+  struct passwd *pw = getpwuid(getuid());
+  while(line) {
+    strcat(arr, strsep(&line, "~"));
+    if(line) {
+      strcat(arr, pw->pw_dir);
+    }
+  }
+  return arr;
+}
+
+//Parse line into space delineated lexemes
 char ** parse_argsSpace(int * argc, char * line) {
 	char ** arr = calloc(1000, sizeof(char *));
 	int i = 0;
@@ -55,6 +73,7 @@ void trim_whitespace(char *str) {
 	strcpy(str, cpy);
 }
 
+//clean whitespace from string
 void clean_str(char *str) {
 	replace_multi_string(str);
 	trim_whitespace(str);

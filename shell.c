@@ -18,6 +18,7 @@
 #define GRN  "\x1B[32m"
 #define BLU  "\x1B[34m"
 
+//replace home dir with ~
 char * niceDir(char * name) {
   char ** arr = calloc(1000, sizeof(char *));
   char cpy[1000];
@@ -60,21 +61,32 @@ void printprompt() {
 }
 
 int main() {
+  //save stdout for later
   int reg_stdout = dup(STDOUT_FILENO);
+  //save stdin for later
   int reg_stdin = dup(STDIN_FILENO);
   char origpath[1000];
-  getcwd(origpath, 1000);
+  getcwd(origpath, 1000); //get original wd to store data in
 	while(1) {
 		unsigned char * line = calloc(1000, sizeof(char));
-		printprompt();
+    //print term prompt (not dynamic :( )
+		printprompt(); 
+    //read line, delineated by ENTER
     liveRead(line, 1000, origpath);
-    char ** semiColons = parse_argsSemiColon((char *)line);
+    //replace tilde with home dir
+    char * homedirparsed = parse_argsHomeDir((char *) line);
+    //parse strings delineated by semicolons
+    char ** semiColons = parse_argsSemiColon((char *) homedirparsed);
 		int i = 0;
 
 		while(semiColons[i]) {
+      //run commands, starting with redirects
       handle_redirect(semiColons[i]);
       i++;
 		}
+
+    //Clean up IO and free stuff
+    free(homedirparsed);
     free(semiColons);
     free(line);
     dup2(reg_stdout, STDOUT_FILENO);

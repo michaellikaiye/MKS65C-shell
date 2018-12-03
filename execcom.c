@@ -6,9 +6,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <wait.h>
+#include <unistd.h>
+#include <pwd.h>
 
 #include "parseargs.h"
 #include "execcom.h"
+//Make a process
 int makeproc(int infd, int outfd, struct command *com) {
   //Child proc and handle builtins
   if(!strncmp(com->argv[0], "exit", 4)) {
@@ -49,13 +52,22 @@ void execprog(struct command *com) {
 }
 
 int cd(struct command *com) {
+  struct passwd *pw = getpwuid(getuid());
   if(com->argc > 3) {
     printf("fysh: cd takes 1 argument, %d found\n", com->argc - 1);
   }
-  int stat = chdir(com->argv[1]);
-  if(stat == -1) {
-    printf("fysh: cd: %s\n", strerror(errno));
-    return 1;
+  if(com->argc == 1) {
+    int stat = chdir(pw->pw_dir);
+    if(stat == -1) {
+      printf("fysh: cd: %s\n", strerror(errno));
+      return 1;
+    }
+  } else {
+    int stat = chdir(com->argv[1]);
+    if(stat == -1) {
+      printf("fysh: cd: %s\n", strerror(errno));
+      return 1;
+    }
   }
   return 0;
 }

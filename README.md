@@ -2,43 +2,30 @@
 # FYSH
 ##### by Oliver Frank and Michael Ye
 
-## To do:
-- \# comments
-- Redirection extras (<<, 2>, &>, ...)
-- Replacing ~/ with home directory (in commandline)   
-- Finish tab completion? (OLIVER)
-- Partial history completion
-- more redirects 2> <2 <& &> <<& &>> <<2 2>>
-- Quoting/String handling("" '' ${VARNAME})
-- Global variables($var)
-- Alias
-- Control flow
-- Functions
-- TBC
-- ERRORS ERRORS ERRORS (change printf to perror)
-
 ## Features:
 - Arrows working  
 - Forks and executes commands  
 - Tab completion   
+- History
 - Backspace working  
 - Redirects using >, <, <<, >> 
 - Parses multiple commands on one line  
-- Pipes working  
+- Pipes working (Potentially infinite)
+- Nice colored prompt
+- Replaces ~ with homedir
 
-## Attempted:
-The following did not end up working, but have been left in the code, commented out.
-- Redirection extras (<<, 2>, &>, ...)
-- Replacing ~/ with home directory (in commandline)   
+## Attempted
+Nothing in the code that is not functional (maybe not bug free though).
 
 ## Bugs:
-- hitting down twice adds empty string to history buff
 - when operating on a file with git (i.e. "git rm FILE.FE"), malloc() throws error and crashes
+- Quotes are not handled properly
 - The following failed sometimes when typing in command line
       (old_top == initial_top (av) && old_size == 0) ||
       ((unsigned long) (old_size) >= MINSIZE &&
       prev_inuse (old_top) && ((unsigned long) old_end
       & (pagesize - 1)) == 0)
+- sometimes crashes on semicolon
 
 ## Files & Function Headers:
 ### parse.c
@@ -71,16 +58,16 @@ Returns: void
 replace_multi_string and trim_whitespace
 
 ### io.c
-Handles commandline editing
+Handles commandline editing (basically the entire readline library in 2 functions)
 - getch  
 Inputs:  
 Returns: unsigned char *  
 Reads from keypress, doesn't echo
 
 - liveRead  
-Inputs: unsigned char * line, int count  
+Inputs: unsigned char * line, int count, char * origpath)
 Returns: void  
-Puts line history into fysh.lines (WARNING: Currently placed in HOME)  
+Puts line history into fysh.lines 
 Stores keypresses and prints when appropriate  
 Doesn't print for arrows and tab  
 Extremely long, messy function  
