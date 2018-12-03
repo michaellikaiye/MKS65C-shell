@@ -59,9 +59,3 @@ void clean_str(char *str) {
 	replace_multi_string(str);
 	trim_whitespace(str);
 }
-
-
-// char * hasPipe(char * line) {
-//   char * p = strchr(line, '|');
-//   return p;
-// }
