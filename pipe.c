@@ -42,7 +42,10 @@ void handle_pipes(int argc, char ** argv) {
 
   int i;
   for(i = 0; i < cc; i++) {
-    pipe(pfd);
+    int stat = pipe(pfd);
+    if(stat == -1) {
+      perror("fysh: failed to pipe");
+    }
     //give write end of pipe to new proc, and old in as input
     makeproc(infd, pfd[1], comarr + i);
     //no use for old write end when done

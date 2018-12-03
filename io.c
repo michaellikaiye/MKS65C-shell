@@ -290,7 +290,11 @@ void liveRead(unsigned char * line, int count, char * origpath) {
   line[size] = '\0';
   printf("\n");
 
-  write(linf, line, strlen(line) * sizeof(char));
-  char nl = '\n';
-  write(linf, &nl, sizeof(char));
+  int stat = write(linf, line, strlen(line) * sizeof(char));
+    char nl = '\n';
+  stat = write(linf, &nl, sizeof(char));
+  if(stat == -1) {
+    perror("fysh: write failed");
+  }
 }
+

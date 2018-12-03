@@ -53,7 +53,7 @@ char * niceDir(char * name) {
 void printprompt() {
 	char * name = getenv("USER");
 	char curDir[1000];
-	getcwd(curDir, 1000);
+	char * stat = getcwd(curDir, 1000);
   char * dir = niceDir(curDir);
   strcpy(curDir, dir);
   free(dir);
@@ -66,7 +66,7 @@ int main() {
   //save stdin for later
   int reg_stdin = dup(STDIN_FILENO);
   char origpath[1000];
-  getcwd(origpath, 1000); //get original wd to store data in
+  char * stat = getcwd(origpath, 1000); //get original wd to store data in
 	while(1) {
 		unsigned char * line = calloc(1000, sizeof(char));
     //print term prompt (not dynamic :( )
