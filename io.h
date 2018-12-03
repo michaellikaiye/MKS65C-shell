@@ -7,5 +7,5 @@ struct histline {
 };
 
 unsigned char * getch();
-void liveRead();
+void liveRead(unsigned char * line, int count, char * origpath);
 #endif

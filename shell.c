@@ -62,10 +62,12 @@ void printprompt() {
 int main() {
   int reg_stdout = dup(STDOUT_FILENO);
   int reg_stdin = dup(STDIN_FILENO);
+  char origpath[1000];
+  getcwd(origpath, 1000);
 	while(1) {
 		unsigned char * line = calloc(1000, sizeof(char));
 		printprompt();
-    liveRead(line, 1000);
+    liveRead(line, 1000, origpath);
     char ** semiColons = parse_argsSemiColon((char *)line);
 		int i = 0;
 

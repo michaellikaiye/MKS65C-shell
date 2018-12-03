@@ -1,0 +1,44 @@
+ls
+ls
+clear
+ls
+ls -al
+cd ..
+ls
+ls
+ls
+ls
+clear
+cd ..
+cd proj/
+ls
+clear
+cd MKS65C-shell/
+ls
+clear
+ls
+ls
+ls
+ls
+ls
+ls
+ls
+ls
+cd ..
+cd ..
+cd ..
+cd MKS65C-shell/
+cd ..
+cat MKS65C-shell/
+cd ..
+cd MKS65C-shell/
+cd ..
+cd ..
+cd ..
+cd ..
+cd MKS65C-shell/parseargs.c
+ls
+cat MKS65C-shell/README.md
+clear
+ls ..
+cd ../rand/

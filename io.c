@@ -36,10 +36,25 @@ unsigned char * getch() {
   return ch;
 }
 
-void liveRead(unsigned char * line, int count) {
-  struct passwd *pw = getpwuid(getuid());
+/* AHHHHHHH
+ * THIS FUNCTION IS SUCH A MESS
+ * WHY IS IT 200 LINES LONG?
+ * I DON'T KNOW!
+ * DO YOU?
+ * IT'S HORRIBLE!
+ * DOES IT WORK?
+ * MAYBE
+ * SOMETIMES: NO
+ * OTHERTIMES: YES
+ * MOST OF THE TIME: huh?
+ * oof.
+ */
+void liveRead(unsigned char * line, int count, char * origpath) {
+  //Commented code is for fysh.lines storage in homes
+  //struct passwd *pw = getpwuid(getuid());
   char homedir[1000];
-  strcpy(homedir, pw->pw_dir);
+  //strcpy(homedir, pw->pw_dir);
+  strcpy(homedir, origpath);
   strcat(homedir, "/.fysh.lines");
   int linf = open(homedir, O_CREAT | O_RDWR | O_APPEND, 0644); //diff
   if(linf == -1) {
@@ -121,7 +136,7 @@ void liveRead(unsigned char * line, int count) {
 
     } else if (*ch == KEY_TAB) {
       char * path = (char *) calloc(1000, sizeof(char));
-      char * openpath[1000];
+
       int bp = cursorpos;
       while(line[bp] != ' ' && bp) {
         bp--;
@@ -132,11 +147,34 @@ void liveRead(unsigned char * line, int count) {
 
       strncpy(path, line + bp, cursorpos - bp);
       if(strlen(path)) {
-        char * openpath[1000];
-        int lastslash = 0;
+        //get path to open
+        int curchar, lastslash;
+        char openpath[1000];
+        lastslash = -1;
+        strcpy(openpath, "./");
+        for(curchar = 0; curchar < strlen(path); curchar++) {
+          if(path[curchar] == '/') {
+            if(lastslash == -1) {
+              //copy first dir
+              strncpy(openpath, path, curchar);
+              openpath[curchar] = '\0';
+            } else {
+              //copy dir
+              strncat(openpath, path + lastslash, curchar - lastslash);
+            }
+            //save this slash position
+            lastslash = curchar;
+          }
+        }
+        
+        if(lastslash != -1) {
+          strcpy(path, path + lastslash + 1);
+          bp += lastslash + 1;
+        }
+
         //Open cwd
         DIR * d;
-        d = opendir(".");
+        d = opendir(openpath);
         struct dirent *entry;
         char ** dirnames = calloc(5000, sizeof(char));
         int currdir = 0;
@@ -196,7 +234,7 @@ void liveRead(unsigned char * line, int count) {
               dirlen = strlen(dirnames[currdir - 1]);
               len += dirlen;
             }
-            d = opendir(".");
+            d = opendir(openpath);
             if(strlen(newPath) > 0) {
               while(entry = readdir(d)) {
                 if(!strcmp(entry->d_name, newPath)) {
