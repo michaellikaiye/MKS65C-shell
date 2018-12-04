@@ -3,6 +3,7 @@
 ##### by Oliver Frank and Michael Ye
 
 ## Features:
+- \# comments
 - Arrows working  
 - Forks and executes commands  
 - Tab completion   
@@ -18,24 +19,30 @@
 Nothing in the code that is not functional (maybe not bug free though).
 
 ## Bugs:
-- when operating on a file with git (i.e. "git rm FILE.FE"), malloc() throws error and crashes
+- When operating on a file with git (i.e. "git rm FILE.FE"), malloc() throws error and crashes
 - Quotes are not handled properly
-- The following failed sometimes when typing in command line
-      (old_top == initial_top (av) && old_size == 0) ||
-      ((unsigned long) (old_size) >= MINSIZE &&
-      prev_inuse (old_top) && ((unsigned long) old_end
-      & (pagesize - 1)) == 0)  
-
-- ~ tab completion
+- Occational memory issues
+- unknown problem with "cd home/"
+- Using ~ in tab completion
 
 ## Files & Function Headers:
 ### parse.c
 Handles all line parsing functions
 
+- parse_comments  
+Inputs: char \* line  
+Returns: char \*  
+Removes chars after occurrence of " #"
+
+- parse_argsHomeDir
+Inputs: char \* line  
+Returns: char \*  
+Replaces "~" with correct string
+
 - parse_argsSemiColon  
 Inputs: char \* line  
-Fills an array with strings where each entry is separated by a ';'  
-Returns: char \*\*
+Returns: char \*\*  
+Fills an array with strings where each entry is separated by a ';'
 
 - parse_argsSpace  
 Inputs: int \* argc, char \* line  
