@@ -21,8 +21,7 @@ Nothing in the code that is not functional (maybe not bug free though).
 ## Bugs:
 - When operating on a file with git (i.e. "git rm FILE.FE"), malloc() throws error and crashes
 - Quotes are not handled properly
-- Occational memory issues
-- unknown problem with "cd home/"
+- Occasional memory issues
 - Using ~ in tab completion
 
 ## Files & Function Headers:

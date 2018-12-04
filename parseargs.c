@@ -5,16 +5,20 @@
 #include <pwd.h>
 
 char * parse_comments(char * line) {
-	char newLine[1000];
-	strcpy(newLine, line);
-	char * loc = strchr(newLine, '#');
-	if(loc != NULL && *(loc - 1) == ' ')
-		*(loc) = '\0';
-	char * re = calloc(1, sizeof(char *));
-	strcpy(re, newLine);
-	return re;
+	char * arr = calloc(1000, sizeof(char *));
+	if(*(line) == '#')
+		return arr;
+	strcpy(arr, line);
+	int i = 0;
+	while(*(arr + i + 1) != 0)
+		if(*(arr + i) == ' ' && *(arr + i + 1) == '#') {
+			*(arr + i) = 0;
+			return arr;
+		}
+		else
+			i++;
+	return arr;
 }
-
 //Parse line into semicolon delineated tokens
 char ** parse_argsSemiColon(char * line) {
 	char ** arr = calloc(1000, sizeof(char *));
@@ -30,7 +34,6 @@ char ** parse_argsSemiColon(char * line) {
 //replace ~ with homedir
 char * parse_argsHomeDir(char * line) {
   char * arr = calloc(1000, sizeof(char *));
-  int i;
   struct passwd *pw = getpwuid(getuid());
   while(line) {
     strcat(arr, strsep(&line, "~"));
