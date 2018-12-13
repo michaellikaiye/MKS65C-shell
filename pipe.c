@@ -21,7 +21,7 @@ void handle_pipes(int argc, char ** argv) {
   int cc = 0; //current command in comarr
   int ccargv = 0; //current arg in current command
   struct command * comarr = calloc(argc, sizeof(struct command));
-  comarr[cc].argv = calloc(argc, sizeof(char **));
+  comarr[cc].argv = calloc(argc + 1, sizeof(char **));
 
   for(int i = 0; i < argc; i++) {
     if(!strcmp(argv[i], "|")) {

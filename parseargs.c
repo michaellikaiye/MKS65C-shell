@@ -70,7 +70,7 @@ void replace_multi_string(char *str) {
 }
 
 void trim_whitespace(char *str) {
-	char * cpy = (char *) calloc(1, strlen(str));
+	char * cpy = (char *) calloc(1, strlen(str) + 1);
 	strcpy(cpy, str);
 	while((unsigned char) *cpy == ' ') {
 		cpy++;
